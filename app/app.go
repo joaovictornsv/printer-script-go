@@ -18,7 +18,7 @@ func Generate() *cli.App {
 			Flags: []cli.Flag{
 				cli.IntFlag{
 					Name:  "start",
-					Value: 0,
+					Value: 1,
 				},
 				cli.IntFlag{
 					Name:     "end",
@@ -57,31 +57,39 @@ func calculatePagesOrderToPrint(c *cli.Context) {
 		backPages := []string{}
 		frontPages := []string{}
 
-		for i := end; i > start; i-- {
+		addToBackPages := false
+		for i := end; i >= start; i-- {
 			if !elementExist(pagesToIgnore, i) {
-				if i%2 == 0 {
+				if addToBackPages {
 					backPages = append(backPages, strconv.Itoa(i))
 				} else {
 					frontPages = append(frontPages, strconv.Itoa(i))
 				}
+				addToBackPages = !addToBackPages
 			}
 		}
 
 		backPagesString := strings.Join(backPages, ",")
 		frontPagesString := strings.Join(frontPages, ",")
 
-		necessaryPapers := end
-		if end%2 != 0 {
-			necessaryPapers = end + 1
+		totalPagesToPrint := len(backPages) + len(frontPages)
+		var necessaryPapers int
+		if totalPagesToPrint%2 != 0 {
+			necessaryPapers = (totalPagesToPrint-1)/2 + 1
+		} else {
+			necessaryPapers = totalPagesToPrint / 2
 		}
 
 		fmt.Println("necessary papers:", necessaryPapers)
-		fmt.Println("back:", backPagesString)
-		fmt.Println("front:", frontPagesString)
+		fmt.Println("(first)  back:", backPagesString)
+		fmt.Println("(second) front:", frontPagesString)
+		if len(backPages) < len(frontPages) {
+			fmt.Println("\nObs: Add a blank paper below the back pages print result")
+		}
 	} else {
 
 		pagesInReverseOrder := []string{}
-		for i := end; i > start-1; i-- {
+		for i := end; i >= start; i-- {
 			if !elementExist(pagesToIgnore, i) {
 				pagesInReverseOrder = append(pagesInReverseOrder, strconv.Itoa(i))
 			}
@@ -89,7 +97,7 @@ func calculatePagesOrderToPrint(c *cli.Context) {
 
 		pagesInReverseOrderString := strings.Join(pagesInReverseOrder, ",")
 
-		fmt.Println("necessary papers:", end)
+		fmt.Println("necessary papers:", (end-start)+1)
 		fmt.Println("copy and paste:", pagesInReverseOrderString)
 	}
 
