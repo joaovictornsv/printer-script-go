@@ -21,4 +21,4 @@
 go.work
 
 # Build
-./printer-script-go
+printer-script-go
