@@ -115,7 +115,7 @@ func getTwoSidedPagesSequence(pagesDetails pagesInfo) twoSidedPages {
 
 	addToBackPages := false
 
-	for currentPage := end; currentPage >= start; currentPage-- {
+	for currentPage := start; currentPage <= end; currentPage++ {
 		isNotIgnoredPage := !elementExistInSlice(pagesToIgnore, currentPage)
 
 		if isNotIgnoredPage {
@@ -129,12 +129,21 @@ func getTwoSidedPagesSequence(pagesDetails pagesInfo) twoSidedPages {
 		}
 	}
 
+	reversePagesSequenceSlice(backPages)
+	reversePagesSequenceSlice(frontPages)
+
 	pagesSequence := twoSidedPages{
 		BackPages:  backPages,
 		FrontPages: frontPages,
 	}
 
 	return pagesSequence
+}
+
+func reversePagesSequenceSlice(pagesSlice []string) {
+	for i, j := 0, len(pagesSlice)-1; i < j; i, j = i+1, j-1 {
+		pagesSlice[i], pagesSlice[j] = pagesSlice[j], pagesSlice[i]
+	}
 }
 
 func calculatePapersForTwoSidedPrint(pagesSequence twoSidedPages) int {
